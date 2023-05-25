@@ -37,12 +37,21 @@ public class Home extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                System.out.println("Iniciar!");
+                try {
+                    carService.startService();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
         buttonStop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Cancelar!");
+                try {
+                    carService.stopService();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
         loadLevel(carService);
@@ -60,9 +69,8 @@ public class Home extends JFrame {
         GridBagConstraints constraints = new GridBagConstraints();
         panelTable.removeAll();
         panelTable.setLayout(layout);
-        panelTable.revalidate();
 
-        this.grid = levelService.convertLevel("malha-exemplo-1.txt");
+        this.grid = levelService.convertLevel(Constant.LEVEL);
 //        carService.addVehicle(new Car(5, 0, Directions.RIGHT, 5, 1, "2", 3000, this, carService));
         ArrayList<Car> cars = carService.getCars();
 
@@ -74,17 +82,24 @@ public class Home extends JFrame {
                 Optional<Car> carOptional = cars.stream().filter(car -> car.getPositionRow() == finalRow && car.getPositionCol() == finalCol).findFirst();
                 if (carOptional.isPresent()) {
                     Car car = carOptional.get();
-                    System.out.println("position " + car.getPositionCol());
-                    ImageIcon imageIcon = new ImageIcon(imageService.getImage(imageService.convertIntToFileName(car.getRoadType(), true, car.getDirection())).getScaledInstance(Constant.IMAGE_SIZE, Constant.IMAGE_SIZE, Image.SCALE_SMOOTH));
+                    ImageIcon oldImageIcon = (ImageIcon) grid[row][col].getIcon();
+                    ImageIcon imageIcon = new ImageIcon(imageService.getImage(imageService.convertIntToFileName(oldImageIcon.getDescription(), true, car.getDirection())).getScaledInstance(Constant.IMAGE_SIZE, Constant.IMAGE_SIZE, Image.SCALE_SMOOTH));
                     grid[row][col].setIcon(imageIcon);
                 }
                 constraints.gridx = col;
                 panelTable.add(grid[row][col], constraints);
             }
         }
+        repaint();
+        revalidate();
+        System.out.println("Nível carregado!");
     }
 
     public int getMaxVehicles() {
         return Integer.parseInt(textFieldMaxVehicles.getText());
+    }
+
+    public JLabel[][] getGrid() {
+        return grid;
     }
 }

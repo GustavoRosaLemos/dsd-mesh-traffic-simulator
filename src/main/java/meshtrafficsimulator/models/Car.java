@@ -3,8 +3,10 @@ package meshtrafficsimulator.models;
 import meshtrafficsimulator.service.CarService;
 import meshtrafficsimulator.view.Home;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Car extends Thread {
     private long id = new Random().nextLong();;
@@ -24,12 +26,10 @@ public class Car extends Thread {
 
     private volatile boolean running = false;
 
-    public Car(int positionRow, int positionCol, Directions direction, int nextPositionRow, int nextPositionCol, String roadType, int speed, Home home, CarService carService) {
+    public Car(int positionRow, int positionCol, Directions direction, String roadType, int speed, Home home, CarService carService) {
         this.positionRow = positionRow;
         this.positionCol = positionCol;
         this.direction = direction;
-        this.nextPositionRow = nextPositionRow;
-        this.nextPositionCol = nextPositionCol;
         this.roadType = roadType;
         this.speed = speed;
         this.home = home;
@@ -68,18 +68,84 @@ public class Car extends Thread {
         running = false;
     }
 
-    public void next() throws IOException {
+    public void next() throws IOException, InterruptedException {
+        if (!running) {
+            return;
+        }
         if (!spawned) {
             carService.addVehicle(this);
             spawned = true;
+            home.loadLevel(carService);
             return;
         }
         switch (direction) {
             case RIGHT: {
-                //TODO fazer ele excluir o veículo para adicionar novamente.
+                int nextPositionCol = positionCol + 1;
+                boolean hasCarAhead = carService.getCars().stream()
+                        .anyMatch(car -> car.positionRow == positionRow && car.positionCol == nextPositionCol && car.id != getId());
+                if(hasCarAhead) {
+                    return;
+                }
+                positionCol = nextPositionCol;
+                if (positionCol >= home.getGrid()[positionRow].length) {
+                    carService.stopCar(this);
+                    return;
+                }
                 carService.removeVehicle(id);
-                positionCol = positionCol + 1;
                 carService.addVehicle(this);
+                home.loadLevel(carService);
+                break;
+            }
+            case LEFT: {
+                int nextPositionCol = positionCol - 1;
+                boolean hasCarAhead = carService.getCars().stream()
+                        .anyMatch(car -> car.positionRow == positionRow && car.positionCol == nextPositionCol && car.id != getId());
+                if(hasCarAhead) {
+                    return;
+                }
+                positionCol = nextPositionCol;
+                if (positionCol < 0) {
+                    carService.stopCar(this);
+                    return;
+                }
+                carService.removeVehicle(id);
+                carService.addVehicle(this);
+                home.loadLevel(carService);
+                break;
+            }
+            case BOTTOM: {
+                int nextPositionRow = positionRow + 1;
+                boolean hasCarAhead = carService.getCars().stream()
+                        .anyMatch(car -> car.positionRow == nextPositionRow && car.positionCol == positionCol && car.id != getId());
+                if(hasCarAhead) {
+                    return;
+                }
+                positionRow = nextPositionRow;
+                if (positionRow >= home.getGrid().length) {
+                    carService.stopCar(this);
+                    return;
+                }
+                carService.removeVehicle(id);
+                carService.addVehicle(this);
+                home.loadLevel(carService);
+                break;
+            }
+            case TOP: {
+                int nextPositionRow = positionRow - 1;
+                boolean hasCarAhead = carService.getCars().stream()
+                        .anyMatch(car -> car.positionRow == nextPositionRow && car.positionCol == positionCol && car.id != getId());
+                if(hasCarAhead) {
+                    return;
+                }
+                positionRow = nextPositionRow;
+                if (positionRow < 0) {
+                    carService.stopCar(this);
+                    return;
+                }
+                carService.removeVehicle(id);
+                carService.addVehicle(this);
+                home.loadLevel(carService);
+                break;
             }
             default: {
                 break;
@@ -96,11 +162,9 @@ public class Car extends Thread {
             System.out.println("Executando thread...");
             try {
                 sleep(speed);
+                next();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
-            }
-            try {
-                next();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

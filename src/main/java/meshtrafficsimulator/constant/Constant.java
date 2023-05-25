@@ -1,5 +1,6 @@
 package meshtrafficsimulator.constant;
 
 public interface Constant {
-     static final int IMAGE_SIZE = 35;
+     int IMAGE_SIZE = 35;
+     String LEVEL = "malha-exemplo-1.txt";
 }

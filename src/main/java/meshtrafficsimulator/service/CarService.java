@@ -6,7 +6,6 @@ import meshtrafficsimulator.view.Home;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class CarService {
     private static ArrayList<Car> cars = new ArrayList<>();
@@ -14,29 +13,47 @@ public class CarService {
 
     public CarService(Home home) throws IOException {
         this.home = home;
-        addVehicle(new Car(5, 0, Directions.RIGHT, 5, 1, "2", 2000, home, this));
+    }
+
+    public void startService() throws IOException {
+        addVehicle(new Car(4, 9, Directions.LEFT,  "2", 500, home, this));
+        addVehicle(new Car(4, 7, Directions.LEFT,  "2", 1000, home, this));
+        addVehicle(new Car(5, 0, Directions.RIGHT,  "2", 500, home, this));
+        addVehicle(new Car(5, 2, Directions.RIGHT,  "2", 1000, home, this));
+        addVehicle(new Car(0, 7, Directions.BOTTOM,  "2", 500, home, this));
+        addVehicle(new Car(2, 7, Directions.BOTTOM,  "2", 1000, home, this));
+        addVehicle(new Car(9, 8, Directions.TOP,  "2", 500, home, this));
+        addVehicle(new Car(7, 8, Directions.TOP,  "2", 1000, home, this));
     }
 
 
-    public void stopService() {
-        cars.forEach(Car::stopThread);
+    public void stopService() throws IOException {
+        cars.forEach(car -> {
+            car.stopThread();
+        });
+        cars.removeAll(cars);
+        home.loadLevel(this);
+    }
+
+    public void stopCar(Car car) throws IOException {
+        car.stopThread();
+        removeVehicle(car.getId());
+        home.loadLevel(this);
     }
 
     public void addVehicle(Car car) throws IOException {
         Integer maxVehicles = home.getMaxVehicles();
-        if (cars.size() <= maxVehicles) {
+        if (cars.size() < maxVehicles) {
             cars.add(car);
             if (!car.isRunning()) {
                 car.setRunning(true);
                 car.start();
             }
-            home.loadLevel(this);
         }
     }
 
     public void removeVehicle(long id) throws IOException {
         cars.removeIf((car) -> car.getId() == id);
-        home.loadLevel(this);
     }
 
     public ArrayList<Car> getCars() {

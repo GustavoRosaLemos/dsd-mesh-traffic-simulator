@@ -67,7 +67,7 @@ public class ImageService {
                     } else if (direction.equals(Directions.BOTTOM)) {
                         return "bottom-car-crossing.png";
                     } else if (direction.equals(Directions.LEFT)) {
-                        return "lef-car-crossing.png";
+                        return "left-car-crossing.png";
                     }
                 }
                 return "crossing.png";
