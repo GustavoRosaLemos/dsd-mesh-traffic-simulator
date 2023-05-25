@@ -1,13 +1,48 @@
 package meshtrafficsimulator.service;
 
+import meshtrafficsimulator.Utils.Utils;
 import meshtrafficsimulator.constant.Constant;
 import meshtrafficsimulator.service.ImageService;
+import meshtrafficsimulator.view.Home;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
-public class LevelService {
+public class LevelService extends Thread {
+
+    private volatile boolean running = false;
+    private Home home;
+
+    private CarService carService;
+
+    public void stopThread() {
+        running = false;
+    }
+
+
+    public LevelService() {
+    }
+
+    public LevelService(Home home, CarService carService) {
+        this.home = home;
+        this.carService = carService;
+    }
+
+    public void run() {
+        while (running) {
+            try {
+                sleep(Constant.SCREEN_UPDATE_DELAY);
+                if (running) {
+                    home.loadLevel(carService);
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public JLabel[][] convertLevel(String fileName) throws IOException {
         try {
@@ -34,5 +69,13 @@ public class LevelService {
             e.printStackTrace();
         }
         return new JLabel[0][];
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 }

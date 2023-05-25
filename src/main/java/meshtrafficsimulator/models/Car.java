@@ -75,7 +75,6 @@ public class Car extends Thread {
         if (!spawned) {
             carService.addVehicle(this);
             spawned = true;
-            home.loadLevel(carService);
             return;
         }
         switch (direction) {
@@ -93,7 +92,6 @@ public class Car extends Thread {
                 }
                 carService.removeVehicle(id);
                 carService.addVehicle(this);
-                home.loadLevel(carService);
                 break;
             }
             case LEFT: {
@@ -110,7 +108,6 @@ public class Car extends Thread {
                 }
                 carService.removeVehicle(id);
                 carService.addVehicle(this);
-                home.loadLevel(carService);
                 break;
             }
             case BOTTOM: {
@@ -127,7 +124,6 @@ public class Car extends Thread {
                 }
                 carService.removeVehicle(id);
                 carService.addVehicle(this);
-                home.loadLevel(carService);
                 break;
             }
             case TOP: {
@@ -144,7 +140,6 @@ public class Car extends Thread {
                 }
                 carService.removeVehicle(id);
                 carService.addVehicle(this);
-                home.loadLevel(carService);
                 break;
             }
             default: {

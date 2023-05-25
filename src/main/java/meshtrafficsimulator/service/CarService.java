@@ -17,10 +17,12 @@ public class CarService {
     private static  ArrayList<Spawn> spawns = new ArrayList<>();
     private Home home;
     private VehicleGenerateService vehicleGenerateService = new VehicleGenerateService(this);
+    private LevelService levelService;
     private boolean running = false;
 
     public CarService(Home home) throws IOException {
         this.home = home;
+        levelService = new LevelService(home, this);
     }
 
     public void startService() throws IOException {
@@ -29,6 +31,8 @@ public class CarService {
             loadVehicleSpawn();
             vehicleGenerateService.start();
             vehicleGenerateService.setRunning(true);
+            levelService.start();
+            levelService.setRunning(true);
         }
     }
 
@@ -76,16 +80,15 @@ public class CarService {
                 car.stopThread();
             });
             cars.removeAll(cars);
-            home.loadLevel(this);
             running = false;
-            vehicleGenerateService.setRunning(false);
+            vehicleGenerateService.stopThread();
+            levelService.stopThread();
         }
     }
 
     public void stopCar(Car car) throws IOException {
         car.stopThread();
         removeVehicle(car.getId());
-        home.loadLevel(this);
     }
 
     public void addVehicle(Car car) throws IOException {

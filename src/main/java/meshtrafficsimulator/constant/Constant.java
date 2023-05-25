@@ -9,4 +9,6 @@ public interface Constant {
      int CAR_SPEED_MIN = 500;
 
      int CAR_SPEED_MAX = 1000;
+
+     int SCREEN_UPDATE_DELAY = 500;
 }
