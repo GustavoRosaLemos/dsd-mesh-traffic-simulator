@@ -1,5 +1,6 @@
 package meshtrafficsimulator.service;
 
+import meshtrafficsimulator.constant.Constant;
 import meshtrafficsimulator.service.ImageService;
 
 import javax.swing.*;
@@ -22,7 +23,7 @@ public class LevelService {
                 String[] lineCol = line.split("\\s");
                 for (int col = 0; col < grid[0].length; col++) {
                     ImageService imageService = new ImageService();
-                    ImageIcon imageIcon = new ImageIcon(imageService.getImage(imageService.convertIntToFileName(lineCol[col], false, null)).getScaledInstance(35, 35, Image.SCALE_SMOOTH));
+                    ImageIcon imageIcon = new ImageIcon(imageService.getImage(imageService.convertIntToFileName(lineCol[col], false, null)).getScaledInstance(Constant.IMAGE_SIZE, Constant.IMAGE_SIZE, Image.SCALE_SMOOTH));
                     imageIcon.setDescription(lineCol[col]);
                     JLabel lblMalha = new JLabel(imageIcon);
                     grid[row][col] = lblMalha;

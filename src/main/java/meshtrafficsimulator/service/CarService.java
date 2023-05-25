@@ -1,6 +1,7 @@
 package meshtrafficsimulator.service;
 
 import meshtrafficsimulator.Utils.Utils;
+import meshtrafficsimulator.constant.Constant;
 import meshtrafficsimulator.models.Car;
 import meshtrafficsimulator.models.Directions;
 import meshtrafficsimulator.models.Spawn;
@@ -65,7 +66,7 @@ public class CarService {
         Spawn spawn = spawns.get(new Random().nextInt(spawns.size()));
         ImageIcon imageIcon = (ImageIcon) home.getGrid()[spawn.getPositionRow()][spawn.getPositionCol()].getIcon();
         String roadType = imageIcon.getDescription();
-        addVehicle(new Car(spawn.getPositionRow(), spawn.getPositionCol(), spawn.getDirection(), roadType, Utils.getRandomNumber(500, 1500), home, this));
+        addVehicle(new Car(spawn.getPositionRow(), spawn.getPositionCol(), spawn.getDirection(), roadType, Utils.getRandomNumber(Constant.CAR_SPEED_MIN, Constant.CAR_SPEED_MAX), home, this));
     }
 
 
