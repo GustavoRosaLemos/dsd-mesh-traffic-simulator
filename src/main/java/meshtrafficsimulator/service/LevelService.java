@@ -50,8 +50,8 @@ public class LevelService extends Thread {
             File file = new File("src/main/java/meshtrafficsimulator/levels/"+fileName);
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            int rowSize = Integer.parseInt(bufferedReader.readLine());
-            int colSize = Integer.parseInt(bufferedReader.readLine());
+            int rowSize = Integer.parseInt(bufferedReader.readLine().trim());
+            int colSize = Integer.parseInt(bufferedReader.readLine().trim());
             JLabel[][] grid = new JLabel[rowSize][colSize];
 
             for (int row = 0; row < grid.length; row++) {
