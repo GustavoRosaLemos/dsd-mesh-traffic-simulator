@@ -72,7 +72,6 @@ public class Home extends JFrame {
 
         this.grid = levelService.convertLevel(Constant.LEVEL);
         ArrayList<Car> cars = carService.getCars();
-
         for (int row = 0; row < grid.length; row++) {
             constraints.gridy = row;
             for (int col = 0; col < grid[0].length; col++) {

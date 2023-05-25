@@ -17,6 +17,7 @@ public class VehicleGenerateService extends Thread{
 
     public void stopThread() {
         running = false;
+        System.out.println("Thread do gerador de veiculos finalizada!");
     }
 
     public void run() {

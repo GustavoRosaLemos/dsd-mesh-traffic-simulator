@@ -1,5 +1,6 @@
 package meshtrafficsimulator.models;
 
+import meshtrafficsimulator.Utils.Utils;
 import meshtrafficsimulator.service.CarService;
 import meshtrafficsimulator.view.Home;
 
@@ -13,8 +14,6 @@ public class Car extends Thread {
     private int positionRow;
     private int positionCol;
     private Directions direction;
-    private int nextPositionRow;
-    private int nextPositionCol;
     private String roadType;
     private int speed;
 
@@ -46,14 +45,6 @@ public class Car extends Thread {
 
     public Directions getDirection() {
         return direction;
-    }
-
-    public int getNextPositionRow() {
-        return nextPositionRow;
-    }
-
-    public int getNextPositionCol() {
-        return nextPositionCol;
     }
 
     public String getRoadType() {
@@ -92,6 +83,7 @@ public class Car extends Thread {
                 }
                 carService.removeVehicle(id);
                 carService.addVehicle(this);
+                chooseDirection();
                 break;
             }
             case LEFT: {
@@ -108,6 +100,7 @@ public class Car extends Thread {
                 }
                 carService.removeVehicle(id);
                 carService.addVehicle(this);
+                chooseDirection();
                 break;
             }
             case BOTTOM: {
@@ -124,6 +117,7 @@ public class Car extends Thread {
                 }
                 carService.removeVehicle(id);
                 carService.addVehicle(this);
+                chooseDirection();
                 break;
             }
             case TOP: {
@@ -140,11 +134,107 @@ public class Car extends Thread {
                 }
                 carService.removeVehicle(id);
                 carService.addVehicle(this);
+                chooseDirection();
                 break;
             }
             default: {
                 break;
             }
+        }
+    }
+
+    private void chooseDirection() {
+        ImageIcon imageIcon = (ImageIcon) home.getGrid()[positionRow][positionCol].getIcon();
+        String roadType = imageIcon.getDescription();
+
+         switch (roadType) {
+            case "5": {
+                direction = Directions.TOP;
+                break;
+            }
+             case "6": {
+                 direction = Directions.RIGHT;
+                 break;
+             }
+             case "7": {
+                 direction = Directions.BOTTOM;
+                 break;
+             }
+             case "8": {
+                 direction = Directions.LEFT;
+                 break;
+             }
+             case "9": {
+                 int random = Utils.getRandomNumber(1, 10);
+                 System.out.println("RANDOM " + random);
+                 if ((random % 2) == 0) {
+                    if (carService.getCars().stream().anyMatch(car -> car.positionRow == positionRow - 1 && car.positionCol == positionCol)) {
+                        direction = Directions.RIGHT;
+                        break;
+                    }
+                    direction = Directions.TOP;
+                 } else {
+                     if (carService.getCars().stream().anyMatch(car -> car.positionRow == positionRow && car.positionCol == positionCol + 1)) {
+                         direction = Directions.TOP;
+                         break;
+                     }
+                     direction = Directions.RIGHT;
+                 }
+                 break;
+             }
+             case "10": {
+                 int random = Utils.getRandomNumber(1, 10);
+                 if ((random % 2) == 0) {
+                     if (carService.getCars().stream().anyMatch(car -> car.positionRow == positionRow - 1 && car.positionCol == positionCol)) {
+                         direction = Directions.LEFT;
+                         break;
+                     }
+                     direction = Directions.TOP;
+                 } else {
+                     if (carService.getCars().stream().anyMatch(car -> car.positionRow == positionRow && car.positionCol == positionCol - 1)) {
+                         direction = Directions.TOP;
+                         break;
+                     }
+                     direction = Directions.LEFT;
+                 }
+                 break;
+             }
+             case "11": {
+                 int random = Utils.getRandomNumber(1, 10);
+                 if ((random % 2) == 0) {
+                     if (carService.getCars().stream().anyMatch(car -> car.positionRow == positionRow && car.positionCol == positionCol + 1)) {
+                         direction = Directions.BOTTOM;
+                         break;
+                     }
+                     direction = Directions.RIGHT;
+                 } else {
+                     if (carService.getCars().stream().anyMatch(car -> car.positionRow == positionRow + 1 && car.positionCol == positionCol)) {
+                         direction = Directions.RIGHT;
+                         break;
+                     }
+                     direction = Directions.BOTTOM;
+                 }
+                 break;
+             }
+             case "12": {
+                 int random = Utils.getRandomNumber(1, 10);
+                 if ((random % 2) == 0) {
+                     if (carService.getCars().stream().anyMatch(car -> car.positionRow == positionRow + 1 && car.positionCol == positionCol)) {
+                         direction = Directions.LEFT;
+                         break;
+                     }
+                     direction = Directions.BOTTOM;
+                 } else {
+                     if (carService.getCars().stream().anyMatch(car -> car.positionRow == positionRow && car.positionCol == positionCol - 1)) {
+                         direction = Directions.BOTTOM;
+                         break;
+                     }
+                     direction = Directions.LEFT;
+                 }
+                 break;
+             }
+            default:
+                break;
         }
     }
 

@@ -26,7 +26,7 @@ public class CarService {
     }
 
     public void startService() throws IOException {
-        if (!running) {
+        if (!running && !vehicleGenerateService.isRunning() && !levelService.isRunning()) {
             running = true;
             loadVehicleSpawn();
             vehicleGenerateService.start();
@@ -70,19 +70,21 @@ public class CarService {
         Spawn spawn = spawns.get(new Random().nextInt(spawns.size()));
         ImageIcon imageIcon = (ImageIcon) home.getGrid()[spawn.getPositionRow()][spawn.getPositionCol()].getIcon();
         String roadType = imageIcon.getDescription();
-        addVehicle(new Car(spawn.getPositionRow(), spawn.getPositionCol(), spawn.getDirection(), roadType, Utils.getRandomNumber(Constant.CAR_SPEED_MIN, Constant.CAR_SPEED_MAX), home, this));
+        if (!cars.stream().anyMatch(car -> car.getPositionRow() == spawn.getPositionRow() && car.getPositionCol() == spawn.getPositionCol())) {
+            addVehicle(new Car(spawn.getPositionRow(), spawn.getPositionCol(), spawn.getDirection(), roadType, Utils.getRandomNumber(Constant.CAR_SPEED_MIN, Constant.CAR_SPEED_MAX), home, this));
+        }
     }
 
 
     public void stopService() throws IOException {
         if (running) {
+            vehicleGenerateService.stopThread();
+            levelService.stopThread();
             cars.forEach(car -> {
                 car.stopThread();
             });
             cars.removeAll(cars);
             running = false;
-            vehicleGenerateService.stopThread();
-            levelService.stopThread();
         }
     }
 

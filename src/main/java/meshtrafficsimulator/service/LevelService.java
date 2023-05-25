@@ -18,6 +18,7 @@ public class LevelService extends Thread {
 
     public void stopThread() {
         running = false;
+        System.out.println("Thread do level service finalizada!");
     }
 
 
