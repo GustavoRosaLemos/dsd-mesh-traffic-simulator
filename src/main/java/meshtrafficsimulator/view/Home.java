@@ -71,7 +71,6 @@ public class Home extends JFrame {
         panelTable.setLayout(layout);
 
         this.grid = levelService.convertLevel(Constant.LEVEL);
-//        carService.addVehicle(new Car(5, 0, Directions.RIGHT, 5, 1, "2", 3000, this, carService));
         ArrayList<Car> cars = carService.getCars();
 
         for (int row = 0; row < grid.length; row++) {
