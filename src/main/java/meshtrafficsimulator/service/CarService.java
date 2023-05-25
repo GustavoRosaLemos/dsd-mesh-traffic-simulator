@@ -1,5 +1,6 @@
 package meshtrafficsimulator.service;
 
+import meshtrafficsimulator.Utils.Utils;
 import meshtrafficsimulator.models.Car;
 import meshtrafficsimulator.models.Directions;
 import meshtrafficsimulator.models.Spawn;
@@ -14,6 +15,7 @@ public class CarService {
     private static ArrayList<Car> cars = new ArrayList<>();
     private static  ArrayList<Spawn> spawns = new ArrayList<>();
     private Home home;
+    private VehicleGenerateService vehicleGenerateService = new VehicleGenerateService(this);
     private boolean running = false;
 
     public CarService(Home home) throws IOException {
@@ -24,15 +26,8 @@ public class CarService {
         if (!running) {
             running = true;
             loadVehicleSpawn();
-            spawnVehicle();
-//            addVehicle(new Car(4, 9, Directions.LEFT,  "2", 500, home, this));
-//            addVehicle(new Car(4, 7, Directions.LEFT,  "2", 1000, home, this));
-//            addVehicle(new Car(5, 0, Directions.RIGHT,  "2", 500, home, this));
-//            addVehicle(new Car(5, 2, Directions.RIGHT,  "2", 1000, home, this));
-//            addVehicle(new Car(0, 7, Directions.BOTTOM,  "2", 500, home, this));
-//            addVehicle(new Car(2, 7, Directions.BOTTOM,  "2", 1000, home, this));
-//            addVehicle(new Car(9, 8, Directions.TOP,  "2", 500, home, this));
-//            addVehicle(new Car(7, 8, Directions.TOP,  "2", 1000, home, this));
+            vehicleGenerateService.start();
+            vehicleGenerateService.setRunning(true);
         }
     }
 
@@ -66,13 +61,12 @@ public class CarService {
         }
     }
 
-    private void spawnVehicle() throws IOException {
+    public void spawnVehicle() throws IOException {
         Spawn spawn = spawns.get(new Random().nextInt(spawns.size()));
         ImageIcon imageIcon = (ImageIcon) home.getGrid()[spawn.getPositionRow()][spawn.getPositionCol()].getIcon();
         String roadType = imageIcon.getDescription();
-        addVehicle(new Car(spawn.getPositionRow(), spawn.getPositionCol(), spawn.getDirection(), roadType, 1000, home, this));
+        addVehicle(new Car(spawn.getPositionRow(), spawn.getPositionCol(), spawn.getDirection(), roadType, Utils.getRandomNumber(500, 1500), home, this));
     }
-
 
 
     public void stopService() throws IOException {
@@ -83,6 +77,7 @@ public class CarService {
             cars.removeAll(cars);
             home.loadLevel(this);
             running = false;
+            vehicleGenerateService.setRunning(false);
         }
     }
 
